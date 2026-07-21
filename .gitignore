@@ -1,0 +1,21 @@
+# Qt Creator specific local files
+*.user
+*.user.*
+
+# CMake / QMake Build Directories
+build*/
+*.CMakeLists.txt.user
+
+# Compiled binary outputs
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+
+# Qt generated source files
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
