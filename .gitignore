@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+# Qt Creator specific local files
+*.user
+*.user.*
+
+# CMake / QMake Build Directories
+build*/
+*.CMakeLists.txt.user
+
+# Compiled binary outputs
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+
+# Qt generated source files
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+=======
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
 
 *~
 *.autosave
@@ -80,3 +105,4 @@ CMakeLists.txt.user*
 .uic/
 /build*/
 /.qtcreator/
+>>>>>>> 339ef4b (Ajout de .gitignore)
