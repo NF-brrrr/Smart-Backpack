@@ -32,6 +32,7 @@ private:
     QPushButton *btnDashboard;
     QPushButton *btnAuth;
     QPushButton *btnHistory;
+    QPushButton *btnConnection;
 
     QWidget *statusWidget;
     QWidget *sidebarWidget;
