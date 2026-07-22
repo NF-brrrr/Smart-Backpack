@@ -144,7 +144,9 @@ void MainWindow::verifyConnection(){
         return;
     }
     else{
-        qDebug() << "Arduino found at: " << targetedPortName << "but failed to open. Error: " << arduino->errorString();
+        btnConnection->setStyleSheet("background-color: red; color: black");
+        btnConnection->setText("Not Connected");
+        qDebug() << "Error: " << arduino->errorString();Bl
     }
 }
 
