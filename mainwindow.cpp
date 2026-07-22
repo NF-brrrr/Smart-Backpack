@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusLayout = new QVBoxLayout(statusWidget);
     statusLayout->setContentsMargins(15, 10, 15, 10);
     btnConnection = new QPushButton("Non connecte", statusWidget);
+    //btnConnection
     btnConnection->setFixedHeight(45);
     statusLayout->addWidget(btnConnection);
 
