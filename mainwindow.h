@@ -45,7 +45,7 @@ private:
 
 
 private slots:
-    void verifyConnection(QBluetoothSocket::SocketState state);
+    void verifyConnection();
     void onAuthButtonClicked();
 };
 #endif // MAINWINDOW_H

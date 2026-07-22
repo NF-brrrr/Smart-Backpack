@@ -13,7 +13,10 @@ public:
     explicit BtConnection(QObject *parent = nullptr);
     void startScan();
     void sendData(const QByteArray &data);
-    QBluetoothSocket* getSocket();
+    QLowEnergyController* getController();
+    QLowEnergyService* getService();
+    QLowEnergyCharacteristic getRxCharacteristic();
+    QLowEnergyCharacteristic getTxCharacteristic();
 
 private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &device);

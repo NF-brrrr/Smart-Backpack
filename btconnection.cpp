@@ -38,6 +38,12 @@ void BtConnection::deviceDiscovered(const QBluetoothDeviceInfo &device){
     }
 }
 
+void BtConnection::serviceDiscovered(const QBluetoothUuid &gattUuid) {
+    if (gattUuid == NUS_SERVICE_UUID) {
+        qDebug() << "Found Nordic UART Service (NUS)!";
+    }
+}
+
 void BtConnection::scanFinished(){
     qDebug() << "Scan complete.";
 }
@@ -65,27 +71,57 @@ void BtConnection::discoveryFinished(){
     connect(service,&QLowEnergyService::characteristicChanged,this,&BtConnection::characteristicChanged);
 
     service->discoverDetails();
+}
 
+void BtConnection::serviceStateChanged(QLowEnergyService::ServiceState newState){
+    if(newState == QLowEnergyService::ServiceState::RemoteServiceDiscovered){
+        qDebug() << "Service details fully discovered";
 
+        rxCharacteristic = service->characteristic(NUS_RX_UUID);
+        txCharacteristic = service->characteristic(NUS_TX_UUID);
 
+        if(txCharacteristic.isValid()){
+            QLowEnergyDescriptor notificationDescriptor = txCharacteristic.descriptor(
+                QBluetoothUuid(QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration)
+            );
+            if(notificationDescriptor.isValid()){
+                service->writeDescriptor(notificationDescriptor, QByteArray::fromHex("0100"));
+                qDebug() << "Subscribed to data notifications from ESP32";
 
+                sendData("1");
+            }
+        }
+    }
+}
 
+void BtConnection::characteristicChanged(const QLowEnergyCharacteristic &info, const QByteArray &value) {
+    if (info.uuid() == NUS_TX_UUID) {
+        qDebug() << "Received from ESP32-S3:" << value;
+    }
+}
 
+QLowEnergyController* BtConnection::getController(){
+    return controller;
+}
 
+QLowEnergyService* BtConnection::getService(){
+    return service;
+}
 
+QLowEnergyCharacteristic BtConnection::getRxCharacteristic(){
+    return rxCharacteristic;
+}
 
+QLowEnergyCharacteristic BtConnection::getTxCharacteristic(){
+    return txCharacteristic;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+void BtConnection::sendData(const QByteArray &data) {
+    if (service && rxCharacteristic.isValid()) {
+        // Write without response is standard for streaming fast BLE UART packages
+        service->writeCharacteristic(rxCharacteristic, data, QLowEnergyService::WriteWithoutResponse);
+        qDebug() << "Sent data to ESP32-S3:" << data;
+    } else {
+        qDebug() << "Cannot send data, BLE characteristics are not ready.";
+    }
 }

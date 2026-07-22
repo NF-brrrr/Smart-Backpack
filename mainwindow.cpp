@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     btClient = new BtConnection;
 
+    btClient->startScan();
+
     setWindowTitle("Smart backpack");
     resize(1280, 800);
     this->setStyleSheet("QMainWindow {background-color : #070D19; }");
@@ -95,17 +97,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(btnAuth, &QPushButton::clicked, this, [=](){onAuthButtonClicked();});
 
-    connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection(btClient->getSocket()->state());});
+    connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection();});
 }
 
-void MainWindow::verifyConnection(QBluetoothSocket::SocketState state){
-    if(state==QBluetoothSocket::SocketState::UnconnectedState){
-        btnConnection->setStyleSheet("background-color: red; color: black");
-        btnConnection->setText("Not Connected");
-    }
-    else if(state==QBluetoothSocket::SocketState::ConnectedState){
-        btnConnection->setStyleSheet("background-color: green; color: white");
+void MainWindow::verifyConnection(){
+    bool isConnected = (btClient->getRxCharacteristic().isValid() && btClient->getTxCharacteristic().isValid());
+
+    if(isConnected){
+        btnConnection->setStyleSheet("background-color: green; color: white;");
         btnConnection->setText("Connected");
+    }
+    else{
+        btnConnection->setStyleSheet("background-color: red; color: black;");
+        btnConnection->setText("Not Connected");
     }
 }
 
