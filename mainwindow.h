@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSerialPort>
+#include "btconnection.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,11 +41,11 @@ private:
     QWidget *sidebarWidget;
     QWidget *dashboardWidget;
 
-    QSerialPort* arduino;
+    BtConnection* btClient;
 
 
 private slots:
-    void verifyConnection();
+    void verifyConnection(QBluetoothSocket::SocketState state);
     void onAuthButtonClicked();
 };
 #endif // MAINWINDOW_H

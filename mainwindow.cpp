@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    arduino = new QSerialPort;
+    btClient = new BtConnection;
 
     setWindowTitle("Smart backpack");
     resize(1280, 800);
@@ -95,58 +95,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(btnAuth, &QPushButton::clicked, this, [=](){onAuthButtonClicked();});
 
-    connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection();});
+    connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection(btClient->getSocket()->state());});
 }
 
-void MainWindow::verifyConnection(){
-    if(arduino->isOpen()){
-        arduino->close();
-        return;
-    }
-
-    bool arduinoFound=false;
-    QString targetedPortName="";
-
-    const auto ports = QSerialPortInfo::availablePorts();
-
-    for (const QSerialPortInfo &portInfo : ports){
-        if(portInfo.hasVendorIdentifier() && (portInfo.vendorIdentifier() == 0x2341 || portInfo.vendorIdentifier() == 0x1a86)){
-            arduinoFound=true;
-            targetedPortName=portInfo.systemLocation();
-            break;
-        }
-        else if(portInfo.description().contains("Arduino", Qt::CaseInsensitive)
-                 || portInfo.manufacturer().contains("Arduino", Qt::CaseInsensitive)){
-            arduinoFound = true;
-            targetedPortName = portInfo.systemLocation();
-            break;
-        }
-    }
-
-
-    if(arduinoFound){
-        arduino->setPortName(targetedPortName);
-        arduino->setBaudRate(QSerialPort::Baud9600);
-        arduino->setParity(QSerialPort::NoParity);
-        arduino->setDataBits(QSerialPort::Data8);
-        arduino->setStopBits(QSerialPort::OneStop);
-        arduino->setFlowControl(QSerialPort::NoFlowControl);
-    }
-    else{
+void MainWindow::verifyConnection(QBluetoothSocket::SocketState state){
+    if(state==QBluetoothSocket::SocketState::UnconnectedState){
         btnConnection->setStyleSheet("background-color: red; color: black");
         btnConnection->setText("Not Connected");
-        qDebug() << "No arduino device detected";
     }
-
-    if(arduino->open(QIODevice::ReadWrite)){
+    else if(state==QBluetoothSocket::SocketState::ConnectedState){
         btnConnection->setStyleSheet("background-color: green; color: white");
         btnConnection->setText("Connected");
-        return;
-    }
-    else{
-        btnConnection->setStyleSheet("background-color: red; color: black");
-        btnConnection->setText("Not Connected");
-        qDebug() << "Error: " << arduino->errorString();Bl
     }
 }
 
