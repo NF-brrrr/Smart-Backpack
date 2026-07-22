@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "logindialog.h"
 #include <QSerialPortInfo>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -92,6 +93,8 @@ MainWindow::MainWindow(QWidget *parent)
         btnHistory->setStyleSheet("background-color: #1E3A8A; color: #4EA2E4; border-radius: 5px; text-align: left; padding-left: 10px;");
     });
 
+    connect(btnAuth, &QPushButton::clicked, this, [=](){onAuthButtonClicked();});
+
     connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection();});
 }
 
@@ -149,4 +152,14 @@ void MainWindow::verifyConnection(){
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+
+void MainWindow::onAuthButtonClicked(){
+    LoginDialog login;
+    if(login.exec() == QDialog::Accepted){
+        authenticated= authenticated == true ? false : true;
+        QString authText = authenticated == true ? "Authenticated" : "Authentification";
+        btnAuth->setText(authText);
+    }
 }

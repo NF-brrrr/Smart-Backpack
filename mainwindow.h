@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    inline static bool authenticated;
 
 private:
     Ui::MainWindow *ui;
@@ -41,8 +42,9 @@ private:
 
     QSerialPort* arduino;
 
+
 private slots:
     void verifyConnection();
-
+    void onAuthButtonClicked();
 };
 #endif // MAINWINDOW_H
