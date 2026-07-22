@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QSerialPort>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -37,5 +38,11 @@ private:
     QWidget *statusWidget;
     QWidget *sidebarWidget;
     QWidget *dashboardWidget;
+
+    QSerialPort* arduino;
+
+private slots:
+    void verifyConnection();
+
 };
 #endif // MAINWINDOW_H

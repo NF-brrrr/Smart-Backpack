@@ -1,11 +1,15 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <QSerialPortInfo>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    arduino = new QSerialPort;
+
     setWindowTitle("Smart backpack");
     resize(1280, 800);
     this->setStyleSheet("QMainWindow {background-color : #070D19; }");
@@ -71,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusLayout = new QVBoxLayout(statusWidget);
     statusLayout->setContentsMargins(15, 10, 15, 10);
     btnConnection = new QPushButton("Non connecte", statusWidget);
-    //btnConnection
+    btnConnection->setCheckable(true);
     btnConnection->setFixedHeight(45);
     statusLayout->addWidget(btnConnection);
 
@@ -87,7 +91,60 @@ MainWindow::MainWindow(QWidget *parent)
         btnAuth->setStyleSheet(styleInactif);
         btnHistory->setStyleSheet("background-color: #1E3A8A; color: #4EA2E4; border-radius: 5px; text-align: left; padding-left: 10px;");
     });
+
+    connect(btnConnection,&QPushButton::clicked,this,[=](){verifyConnection();});
 }
+
+void MainWindow::verifyConnection(){
+    if(arduino->isOpen()){
+        arduino->close();
+        return;
+    }
+
+    bool arduinoFound=false;
+    QString targetedPortName="";
+
+    const auto ports = QSerialPortInfo::availablePorts();
+
+    for (const QSerialPortInfo &portInfo : ports){
+        if(portInfo.hasVendorIdentifier() && (portInfo.vendorIdentifier() == 0x2341 || portInfo.vendorIdentifier() == 0x1a86)){
+            arduinoFound=true;
+            targetedPortName=portInfo.systemLocation();
+            break;
+        }
+        else if(portInfo.description().contains("Arduino", Qt::CaseInsensitive)
+                 || portInfo.manufacturer().contains("Arduino", Qt::CaseInsensitive)){
+            arduinoFound = true;
+            targetedPortName = portInfo.systemLocation();
+            break;
+        }
+    }
+
+
+    if(arduinoFound){
+        arduino->setPortName(targetedPortName);
+        arduino->setBaudRate(QSerialPort::Baud9600);
+        arduino->setParity(QSerialPort::NoParity);
+        arduino->setDataBits(QSerialPort::Data8);
+        arduino->setStopBits(QSerialPort::OneStop);
+        arduino->setFlowControl(QSerialPort::NoFlowControl);
+    }
+    else{
+        btnConnection->setStyleSheet("background-color: red; color: black");
+        btnConnection->setText("Not Connected");
+        qDebug() << "No arduino device detected";
+    }
+
+    if(arduino->open(QIODevice::ReadWrite)){
+        btnConnection->setStyleSheet("background-color: green; color: white");
+        btnConnection->setText("Connected");
+        return;
+    }
+    else{
+        qDebug() << "Arduino found at: " << targetedPortName << "but failed to open. Error: " << arduino->errorString();
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
