@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.19)
 project(SmartBackpack LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets SerialPort)
 
 qt_standard_project_setup()
+
+set(CMAKE_AUTOUI ON)
 
 qt_add_executable(SmartBackpack
     WIN32 MACOSX_BUNDLE
@@ -11,12 +13,16 @@ qt_add_executable(SmartBackpack
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    logindialog.cpp
+    logindialog.h
+    logindialog.ui
 )
 
 target_link_libraries(SmartBackpack
     PRIVATE
         Qt::Core
         Qt::Widgets
+        Qt6::SerialPort
 )
 
 include(GNUInstallDirs)
