@@ -47,5 +47,6 @@ private:
 private slots:
     void verifyConnection();
     void onAuthButtonClicked();
+    void tableauDebord();
 };
 #endif // MAINWINDOW_H
