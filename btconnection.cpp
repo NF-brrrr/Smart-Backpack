@@ -118,7 +118,6 @@ QLowEnergyCharacteristic BtConnection::getTxCharacteristic(){
 
 void BtConnection::sendData(const QByteArray &data) {
     if (service && rxCharacteristic.isValid()) {
-        // Write without response is standard for streaming fast BLE UART packages
         service->writeCharacteristic(rxCharacteristic, data, QLowEnergyService::WriteWithoutResponse);
         qDebug() << "Sent data to ESP32-S3:" << data;
     } else {

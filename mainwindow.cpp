@@ -120,10 +120,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::verifyConnection(){
-    if(arduino->isOpen()){
-        arduino->close();
-        return;
-    }
+    bool isConnected = (btClient->getRxCharacteristic().isValid() && btClient->getTxCharacteristic().isValid());
 
     if(isConnected){
         btnConnection->setStyleSheet("background-color: green; color: white;");
