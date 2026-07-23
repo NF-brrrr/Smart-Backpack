@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QSerialPort>
+#include "btconnection.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    inline static bool authenticated;
 
 private:
     Ui::MainWindow *ui;
@@ -39,11 +41,11 @@ private:
     QWidget *sidebarWidget;
     QWidget *dashboardWidget;
 
-    QSerialPort* arduino;
+    BtConnection* btClient;
+
 
 private slots:
     void verifyConnection();
-    void tableauDebord();
-
+    void onAuthButtonClicked();
 };
 #endif // MAINWINDOW_H

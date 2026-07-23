@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
 project(SmartBackpack LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets SerialPort)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets SerialPort Bluetooth Network)
 
 qt_standard_project_setup()
 
-set(CMAKE_AUTOUI ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUUI ON)
 
 qt_add_executable(SmartBackpack
     WIN32 MACOSX_BUNDLE
@@ -16,8 +18,8 @@ qt_add_executable(SmartBackpack
     logindialog.cpp
     logindialog.h
     logindialog.ui
-
-
+    btconnection.cpp
+    btconnection.h
 )
 
 target_link_libraries(SmartBackpack
@@ -25,6 +27,8 @@ target_link_libraries(SmartBackpack
         Qt::Core
         Qt::Widgets
         Qt6::SerialPort
+        Qt6::Bluetooth
+        Qt6::Network
 )
 
 include(GNUInstallDirs)

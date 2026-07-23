@@ -18,6 +18,7 @@ public:
 private:
     Ui::LoginDialog *ui;
     void onLoginButtonClicked();
+    void onDisconnectButtonClicked();
 };
 
 #endif // LOGINDIALOG_H
