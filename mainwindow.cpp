@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusLayout->addWidget(btnConnection);
 
     barMenu->addWidget(statusWidget);
-
+    verifyConnection();
     connect(btnHistory, &QPushButton::clicked, this, [this]() {
         btnDashboard->setChecked(false);
         btnHistory->setChecked(false);
@@ -118,11 +118,13 @@ void MainWindow::verifyConnection(){
     bool isConnected = (btClient->getRxCharacteristic().isValid() && btClient->getTxCharacteristic().isValid());
 
     if(isConnected){
-        btnConnection->setStyleSheet("background-color: green; color: white;");
+        statusWidget->setStyleSheet("background-color: green; border-radius: 8px;");
+        btnConnection->setStyleSheet("background-color: transparent; border: none; color: white; font-weight: bold;");
         btnConnection->setText("Connected");
     }
     else{
-        btnConnection->setStyleSheet("background-color: red; color: black;");
+        statusWidget->setStyleSheet("background-color: red; border-radius: 8px;");
+        btnConnection->setStyleSheet("background-color: transparent; border: none; color: white; font-weight: bold;");
         btnConnection->setText("Not Connected");
     }
 }
