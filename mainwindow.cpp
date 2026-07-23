@@ -24,7 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
-    // ERREUR 1 CORRIGÉE : On met centralWidget comme parent (et pas 'this') pour débloquer les clics !
     sidebarWidget = new QWidget(centralWidget);
     sidebarWidget->setStyleSheet("background-color: #0B1224;");
     sidebarWidget->setFixedWidth(260);
@@ -51,22 +50,19 @@ MainWindow::MainWindow(QWidget *parent)
     barMenu->addWidget(titleLabel);
     barMenu->addSpacing(20);
 
-    // Bouton Authentification (Inactif au démarrage)
     btnAuth = new QPushButton("Authentification", sidebarWidget);
     btnAuth->setCheckable(true);
     btnAuth->setFixedHeight(45);
     btnAuth->setStyleSheet("color: #A0AEC0; background-color: transparent; border: none; text-align: left; padding-left: 10px;");
     barMenu->addWidget(btnAuth);
 
-    // Bouton Tableau de bord (Actif au démarrage)
     btnDashboard = new QPushButton(" Tableau de bord ", sidebarWidget);
-    btnDashboard->setCheckable(true); // ERREUR 2 CORRIGÉE : Ajout de setCheckable
-    btnDashboard->setChecked(true);   // Sélectionné par défaut
+    btnDashboard->setCheckable(true);
+    btnDashboard->setChecked(true);
     btnDashboard->setFixedHeight(45);
     btnDashboard->setStyleSheet("background-color: #1E3A8A; color: #4EA2E4; border-radius: 5px; text-align: left; padding-left: 10px;");
     barMenu->addWidget(btnDashboard);
 
-    // Bouton Historique (Inactif au démarrage)
     btnHistory = new QPushButton("Historique", sidebarWidget);
     btnHistory->setCheckable(true);
     btnHistory->setFixedHeight(45);
@@ -91,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     barMenu->addWidget(statusWidget);
 
-    // ERREUR 3 CORRIGÉE : On met à jour la couleur bleue au clic
     connect(btnHistory, &QPushButton::clicked, this, [this]() {
         btnDashboard->setChecked(false);
         btnHistory->setChecked(false);
@@ -130,6 +125,95 @@ void MainWindow::verifyConnection(){
         btnConnection->setStyleSheet("background-color: red; color: black;");
         btnConnection->setText("Not Connected");
     }
+}
+
+void MainWindow::tableauDebord()
+{
+    QVBoxLayout *dashlayout = new QVBoxLayout(dashboardWidget);
+    dashlayout->setContentsMargins(30,30,30,30);
+    dashlayout->setSpacing(20);
+    QLabel *dashTitle = new QLabel("<b style='color: white; font-size: 22px;'>Tableau de bord</b><br>"
+                                   "<span style='color: #718096; font-size: 13px;'>Aperçu en temps réel de votre sac intelligent</span>", dashboardWidget);
+    dashlayout->addWidget(dashTitle);
+    QGridLayout *cardsGrid = new QGridLayout();
+    cardsGrid->setSpacing(20);
+    QString cardStyle = "QWidget { background-color: #0B1224; border: 1px solid #1E293B; border-radius: 12px; }";
+
+    /*QWidget *cardEtat =  new QWidget(dashboardWidget);
+    cardEtat->setStyleSheet(cardStyle);
+    QVBoxLayout *layoutEtat = new QVBoxLayout(cardEtat);
+    layoutEtat->setContentsMargins(20,20,20,20);
+    QLabel *labelTitre = new QLabel("Etat du sac",cardEtat);
+    QLabel *labelEtat = new QLabel("Fermé & Sécurisé",cardEtat);
+
+    layoutEtat->addWidget(labelTitre);
+    layoutEtat->addWidget(labelEtat);
+
+    dashlayout->addWidget(cardEtat);
+
+    QWidget *cardHumidite= new QWidget(dashboar
+*/
+    QWidget *cardStatus = new QWidget(dashboardWidget);
+    cardStatus->setStyleSheet(cardStyle);
+    QVBoxLayout *layoutStatus = new QVBoxLayout(cardStatus);
+    layoutStatus->setContentsMargins(20, 20, 20, 20);
+
+    QLabel *lblStatusTitle = new QLabel("<span style='color: #A0AEC0; font-size: 13px; font-weight: bold;'>ÉTAT DU SAC</span>", cardStatus);
+    QLabel *lblStatusVal = new QLabel("<span style='color: #10B981; font-size: 20px; font-weight: bold;'>Fermé & Sécurisé</span>", cardStatus);
+    layoutStatus->addWidget(lblStatusTitle);
+    layoutStatus->addWidget(lblStatusVal);
+    layoutStatus->addStretch();
+
+    //CARTE 2 : Authentification ---
+    QWidget *cardAuth = new QWidget(dashboardWidget);
+    cardAuth->setStyleSheet(cardStyle);
+    QVBoxLayout *layoutAuth = new QVBoxLayout(cardAuth);
+    layoutAuth->setContentsMargins(20, 20, 20, 20);
+
+    QLabel *lblAuthTitle = new QLabel("<span style='color: #A0AEC0; font-size: 13px; font-weight: bold;'>AUTHENTIFICATION</span>", cardAuth);
+    QLabel *lblAuthVal = new QLabel("<span style='color: #4EA2E4; font-size: 20px; font-weight: bold;'>Verrouillé</span>", cardAuth);
+    layoutAuth->addWidget(lblAuthTitle);
+    layoutAuth->addWidget(lblAuthVal);
+    layoutAuth->addStretch();
+
+    // CARTE 3 : Humidité ---
+    QWidget *cardHum = new QWidget(dashboardWidget);
+    cardHum->setStyleSheet(cardStyle);
+    QVBoxLayout *layoutHum = new QVBoxLayout(cardHum);
+    layoutHum->setContentsMargins(20, 20, 20, 20);
+
+    QLabel *lblHumTitle = new QLabel("<span style='color: #A0AEC0; font-size: 13px; font-weight: bold;'>HUMIDITÉ INTERNE</span>", cardHum);
+    QLabel *lblHumVal = new QLabel("<span style='color: white; font-size: 28px; font-weight: bold;'>42 %</span>", cardHum);
+    QLabel *lblHumSub = new QLabel("<span style='color: #10B981; font-size: 12px;'>Niveau optimal</span>", cardHum);
+    layoutHum->addWidget(lblHumTitle);
+    layoutHum->addWidget(lblHumVal);
+    layoutHum->addWidget(lblHumSub);
+    layoutHum->addStretch();
+
+    // CARTE 4 : Batterie ---
+    QWidget *cardBat = new QWidget(dashboardWidget);
+    cardBat->setStyleSheet(cardStyle);
+    QVBoxLayout *layoutBat = new QVBoxLayout(cardBat);
+    layoutBat->setContentsMargins(20, 20, 20, 20);
+
+    QLabel *lblBatTitle = new QLabel("<span style='color: #A0AEC0; font-size: 13px; font-weight: bold;'>BATTERIE</span>", cardBat);
+    QLabel *lblBatVal = new QLabel("<span style='color: white; font-size: 28px; font-weight: bold;'>85 %</span>", cardBat);
+    QLabel *lblBatSub = new QLabel("<span style='color: #10B981; font-size: 12px;'>En fonctionnement</span>", cardBat);
+    layoutBat->addWidget(lblBatTitle);
+    layoutBat->addWidget(lblBatVal);
+    layoutBat->addWidget(lblBatSub);
+    layoutBat->addStretch();
+
+    cardsGrid->addWidget(cardStatus, 0, 0);
+    cardsGrid->addWidget(cardAuth, 0, 1);
+    cardsGrid->addWidget(cardHum, 1, 0);
+    cardsGrid->addWidget(cardBat, 1, 1);
+
+    dashlayout->addLayout(cardsGrid);
+    dashlayout->addStretch();
+    QSpacerItem *space = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    dashlayout->addItem(space);
+
 }
 
 
