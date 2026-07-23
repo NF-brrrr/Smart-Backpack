@@ -16,6 +16,8 @@ qt_add_executable(SmartBackpack
     logindialog.cpp
     logindialog.h
     logindialog.ui
+
+
 )
 
 target_link_libraries(SmartBackpack
